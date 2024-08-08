@@ -105,6 +105,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class AdminUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        extra_kwargs = {
+                        'profile_picture': {'required': False},
+                        }
         fields = [
                   'id', 'username', 'first_name', 'last_name', 'role', 'is_staff',
                   'email', 'profile_picture', 'phone', 'bio', 'address'

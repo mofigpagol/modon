@@ -63,9 +63,10 @@ class SearchFilterSerializers(serializers.ModelSerializer):
 
 
 class LocationSerializers(serializers.ModelSerializer):
-    class Meta:
+    class Meta: 
         model = Location
         extra_kwargs = {
+                        'country': {'required': False},
                         'division': {'required': False}, 
                         'district': {'required': False},
                         'upazila': {'required': False},
@@ -74,7 +75,8 @@ class LocationSerializers(serializers.ModelSerializer):
                         'custom_location': {'required': False},
                         }
         fields = [
-                  'id', 'location_type', 
+                  'id', 'location_type',
+                  'country', 
                   'division', 'district',
                   'upazila', 'custom_location',
                   'created_at', 'updated_at'
@@ -85,6 +87,7 @@ class NewsPostSerializers(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
     editor_name = serializers.SerializerMethodField()
     custom_location = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
     division = serializers.SerializerMethodField()
     district = serializers.SerializerMethodField()
     upazila = serializers.SerializerMethodField()
@@ -94,6 +97,7 @@ class NewsPostSerializers(serializers.ModelSerializer):
         model = NewsPost
         extra_kwargs = {
                         'trending_tags': {'required': False}, 
+                        'image': {'required': False}, 
                         'share_count': {'required': False}, 
                         'created_at': {'required': False},
                         'updated_at': {'required': False},
@@ -103,8 +107,8 @@ class NewsPostSerializers(serializers.ModelSerializer):
         fields = ['id', 'headline', 'content', 
                   'category', 'category_name', 'editor',  
                   'editor_name', 'is_active', 'custom_location', 
-                  'location_type',
-                  'location', 'division', 'district', 'upazila',
+                  'location_type', 'location', 'country',    
+                  'division', 'district', 'upazila',
                   'trending_tags', 'image', 'video', "share_count",
                   'photo_editor', 'created_at', 'updated_at'
                   ]
@@ -117,6 +121,9 @@ class NewsPostSerializers(serializers.ModelSerializer):
     
     def get_custom_location(self, obj):
         return obj.location.custom_location
+    
+    def get_country(self, obj):
+        return obj.location.country
     
     def get_division(self, obj):
         return obj.location.division

@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import redirect
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -95,12 +96,12 @@ class UserRegistrationView(APIView):
                 validated_data = serializer.validated_data
                 user = serializer.save(validated_data)
                 user.save()
-                print(user)
+                # print(user)
                 token = default_token_generator.make_token(user)
                 # print("token ", token)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
                 # print("uid ", uid)
-                confirm_link = f"https://kalerpotro-server.onrender.com/api/auth_user/active/{uid}/{token}"
+                confirm_link = f"https://kalerpotro.pythonanywhere.com/api/auth_user/active/{uid}/{token}"
                 email_subject = "Confirm Your Email"
                 email_body = render_to_string('confirm_email.html', {'confirm_link' : confirm_link})
                 
@@ -122,29 +123,28 @@ class ActivateAccountView(APIView):
         except User.DoesNotExist:
             user = None
         
-        print(user)
+        # print(user)
         if user is not None and default_token_generator.check_token(user, token):
             print("user valid ache ", user.role)
             if user.role == "ADMIN":
-                print("user valid ache Admin er modde", user.role)
+                # print("user valid ache Admin er modde", user.role)
                 user.is_active = True
                 user.is_staff = True
                 user.save()
 
             elif user.role == "EDITOR":
-                print("user valid ache editor er modde", user.role)
+                # print("user valid ache editor er modde", user.role)
                 user.is_active = True
                 user.save()
-
             
-            return Response({"message": "Account Successfully Activated"}, status=status.HTTP_200_OK)
+            return redirect('https://admin.kalerpotro.com/email_verify?success=true')
         else:
-            return Response({"message": "Invalid activation link or user does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return redirect('https://admin.kalerpotro.com/email_verify?success=false')
 
 
 class UserLoginView(APIView):
     renderer_classes = [UserRenderer]
-    # print('login views')
+   
     def post(self, request, format=None):
         print('login post function')
         serializer = UserLoginSerializer(data=request.data)

@@ -63,6 +63,7 @@ class Location(models.Model):
     location_type = models.CharField(
         max_length=14, choices=TYPE.choices, default=TYPE.NATIONAL
         )
+    country = models.CharField(max_length=100, blank=True)
     division = models.CharField(max_length=100)
     district = models.CharField(max_length=100)
     upazila = models.CharField(max_length=100)
@@ -87,7 +88,7 @@ class NewsPost(models.Model):
     image = models.URLField(blank=True)
     video = models.URLField(blank=True)
     share_count = models.PositiveIntegerField(default=0)
-    photo_editor = models.CharField(max_length=100, blank=True)
+    photo_editor = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     
